@@ -1,3 +1,6 @@
+# Import CUDA support
+FROM nvidia/cuda:11.5.2-devel-ubuntu20.04 AS cuda_stage
+
 # Use the official ROS Melodic base image
 FROM osrf/ros:noetic-desktop-full
 
@@ -28,12 +31,19 @@ COPY . /workspace/src/
 
 WORKDIR /workspace
 
+# COPY the CUDA toolkit from the cuda_stage
+COPY --from=cuda_stage /usr/local/cuda /usr/local/cuda
 
 # Set environment variables
 ENV ROS_DISTRO noetic
 ENV ROS_VERSION 1
+
+# Set up the environment for cuda
+ENV PATH=/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+
 # RUN catkin build
-RUN . /opt/ros/noetic/setup.sh && catkin_make
+RUN . /opt/ros/noetic/setup.sh && catkin_make -DCMAKE_BUILD_TYPE=Release -j1
 
 
 # Source the ROS setup file
