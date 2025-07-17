@@ -22,3 +22,8 @@ docker_gpu_test:
 .PHONY : docker_roscore_gpu
 docker_roscore_gpu:
 	docker run -d --network host --runtime=nvidia --gpus all -e DISPLAY=$DISPLAY --env="QT_X11_NO_MITSHM=1"  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --name egoplannerswarm egoplannerswarm roscore
+
+# Enter the docker container
+.PHONY : docker_enter
+docker_enter:
+	docker exec -it egoplannerswarm /bin/bash
