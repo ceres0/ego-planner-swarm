@@ -2,10 +2,27 @@
 FROM nvidia/cuda:11.5.2-devel-ubuntu20.04 AS cuda_stage
 
 # Use the official ROS Melodic base image
-FROM osrf/ros:noetic-desktop-full
+# FROM ubuntu:20.04
+FROM ros:noetic-perception
 
 # Set the working directory
 WORKDIR /workspace
+
+# RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup
+
+RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+
+# RUN apt-get update \ 
+#     && apt-get install -y --quiet --no-install-recommends \
+#     lsb-release curl sudo gnupg2
+
+RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+
+RUN apt-get update \ 
+    && apt-get install -y --quiet --no-install-recommends \
+    ros-noetic-desktop-full
 
 # Install additional dependencies if needed
 # For example, you can uncomment the line below to install a package
