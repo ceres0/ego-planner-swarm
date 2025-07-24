@@ -11,7 +11,7 @@ docker_run:
 # Run docker project with roscore
 .PHONY : docker_roscore
 docker_roscore:
-	docker run -d --name egoplannerswarm --network host -e DISPLAY=$DISPLAY --env="QT_X11_NO_MITSHM=1"  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" egoplannerswarm roscore
+	docker run -d --name egoplannerswarm --network host -e DISPLAY=$(DISPLAY) --env="QT_X11_NO_MITSHM=1"  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" egoplannerswarm roscore
 
 # Run docker test gpu
 .PHONY : docker_gpu_test
@@ -21,9 +21,21 @@ docker_gpu_test:
 # Run docker project with GPU support
 .PHONY : docker_roscore_gpu
 docker_roscore_gpu:
-	docker run -d --network host --runtime=nvidia --gpus all -e DISPLAY=$DISPLAY --env="QT_X11_NO_MITSHM=1"  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --name egoplannerswarm egoplannerswarm roscore
+	docker run -d --network host --runtime=nvidia --gpus all -e DISPLAY=$(DISPLAY) --env="QT_X11_NO_MITSHM=1"  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --name egoplannerswarm egoplannerswarm roscore
 
 # Enter the docker container
 .PHONY : docker_enter
 docker_enter:
 	docker exec -it egoplannerswarm /bin/bash
+
+.PHONY : docker_stop
+docker_stop:
+	docker stop egoplannerswarm
+
+.PHONY : docker_remove
+docker_remove:
+	docker rm egoplannerswarm
+
+.PHONY : docker_start
+docker_start:
+	docker start egoplannerswarm
